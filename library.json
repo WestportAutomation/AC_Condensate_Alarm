@@ -1,0 +1,26 @@
+{
+    "name": "AC_Condensor_V2",
+    "version": "1.0.0",  
+    "description": "Detects condensor water level and controls a buzzer and silence pin.",
+    "keywords": "Water Level",
+    "repository": {
+        "name": "Water Level Detection",
+        "type": "git",
+        "url": "https://github.com/WestportAutomation/MyDelay.git"
+
+    },
+    "authors": [
+        {
+            "name": "Westport Automation",
+            "email": "WestportAutomation@shaw.ca",
+            "maintainer": true
+        }
+
+    ],
+    "license": "MIT",
+    "frameworks": 
+        {
+            "name": "arduino",
+            "platforms": "*"
+        }
+    }
