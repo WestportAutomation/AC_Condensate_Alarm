@@ -1,5 +1,5 @@
 #include <Arduino.h>
-#include <MyDelay.h>
+#include <MyDelay.h> // Include the MyDelay library for delay functionality
 #include <ioPins.h>
 
 MyDelay Scan(5000); // Create a MyDelay object with a 5-second delay
