@@ -1,53 +1,12 @@
 #include <Arduino.h>
 #include <MyDelay.h> // Include the MyDelay library for delay functionality
-#include <ioPins.h>
+#include <ioPins.h>  // Include the ioPins library for pin definitions and setup
+#include <MyDef.h> // Include the MyDef library for definitions
 
 MyDelay Scan(5000); // Create a MyDelay object with a 5-second delay
 MyDelay Debug(2000); // Create a MyDelay object with a 2-second delay
 
-// Declaire AlarmState states
-enum class AlarmState : uint8_t
-{
-    Normal,
-    Alarm,
-    Bypass
-};
 AlarmState currentAlarmState = AlarmState::Normal; // Initialize an AlarmState variable to Normal
-
-// Function definitions
-void IsNormal(bool); // Function prototype for the Normal state
-void IsAlarm(bool);  // Function prototype for the Alarm state
-void IsBypass(bool); // Function prototype for the Bypass state
-void IsrSilence();   // Function prototype for the interrupt service routine
-void getDebug();     // Function prototype for debugging output
-
-void PinModeSetup()
-{
-    pinMode(_SilencePin, INPUT_PULLUP); // Set Silence pin as input with pull-up resistor
-    pinMode(_WaterPin, INPUT_PULLUP);   // Set Water pin as input with pull-up resistor
-    pinMode(_BuzzerPin, OUTPUT);        // Set Buzzer pin as output
-    pinMode(_LedPin, OUTPUT);           // Set Led pin as output
-}
-
-// declare a pointer array of functions
-void (*States[])(bool i){// An array of functions that takes a bool value.  Not using the bool now just playing around with options.  Pg functions without it.
-                         IsNormal,
-                         IsAlarm,
-                         IsBypass,
-                         nullptr};
-
-// Global Varialbles
-long StartTime = 0;
-long SilenceTime = 30000;
-bool WaterFlag = false;
-bool SilenceFlag = false;
-bool TimeOut = true;
-uint8_t VolumeOn = 155;
-uint8_t VolumeOff = 0;
-uint8_t LedFull = 255;
-uint8_t LedHalf = 127;
-uint32_t BypassF_Rate = 1000;
-uint8_t AlarmF_Rate = 200;
 
 void setup()
 {
@@ -95,7 +54,7 @@ void loop()
     if (SilenceFlag && !TimeOut)
     {
         long now = millis();
-        if (now - StartTime < SilenceTime)
+        if (now - StartTime < BypassTimer)
         {
             currentAlarmState = AlarmState::Bypass;
         }
