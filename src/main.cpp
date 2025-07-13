@@ -64,10 +64,11 @@ void loop()
             SilenceFlag = false;
         }
 
+       }
         // Call the approrate function based on state
         //  int call = static_cast<int>(CurrentState);  //cast currentstate enum to int
         States[(uint8_t)currentAlarmState](1); // call the appropriate function based on the current alarm state.  The bool value is not used in this case, but it is passed to match the function signature.
-    }
+    
     if (Debug.Tick()){
         getDebug();
     }
@@ -76,14 +77,15 @@ void loop()
 // Subroutine
 void IsNormal(bool i)
 {
-    digitalWrite(_LedPin, LedFull); // Turn off the LED
+    Serial.println("Normal State Bitchs");
+    analogWrite(_LedPin, 125); // Turn off the LED
     analogWrite(_BuzzerPin, VolumeOff); // Turn off the buzzer
 }
 
 void IsAlarm(bool i)
 {
     analogWrite(_BuzzerPin, VolumeOn);
-    analogWrite(_LedPin, LedFull);
+    analogWrite(_LedPin, LedHalf);
     delay(AlarmF_Rate);
     analogWrite(_LedPin, 0);
     delay(AlarmF_Rate);
