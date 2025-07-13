@@ -31,44 +31,49 @@ void IsrSilence()
 
 void loop()
 {
-    // Chk if there is water present
-    if (!digitalRead(_WaterPin))
+    if (Scan.Tick()) // Check if the Scan delay has elapsed
     {
-        WaterFlag = true;
-    }
-    else
-    {
-        WaterFlag = false;
-    }
-    // chk if the bypass button has not been pushed
-    if (WaterFlag && !SilenceFlag)
-    {
-        currentAlarmState = AlarmState::Alarm;
-    }
-    // Reset to normal
-    if (!WaterFlag)
-    {
-        currentAlarmState = AlarmState::Normal;
-    }
-    // Chk if the bypass button has been pressed and the bypass time has not timed out
-    if (SilenceFlag && !TimeOut)
-    {
-        long now = millis();
-        if (now - StartTime < BypassTimer)
+        // Chk if there is water present
+        if (!digitalRead(_WaterPin))
         {
-            currentAlarmState = AlarmState::Bypass;
+            WaterFlag = true;
         }
         else
         {
-            TimeOut = true;
-            SilenceFlag = false;
+            WaterFlag = false;
         }
-
-        // Call the approrate function based on state
-        //  int call = static_cast<int>(CurrentState);  //cast currentstate enum to int
-        States[(uint8_t)currentAlarmState](1); // call the appropriate function based on the current alarm state.  The bool value is not used in this case, but it is passed to match the function signature.
+        // chk if the bypass button has not been pushed
+        if (WaterFlag && !SilenceFlag)
+        {
+            currentAlarmState = AlarmState::Alarm;
+        }
+        // Reset to normal
+        if (!WaterFlag)
+        {
+            currentAlarmState = AlarmState::Normal;
+        }
+        // Chk if the bypass button has been pressed and the bypass time has not timed out
+        if (SilenceFlag && !TimeOut)
+        {
+            long now = millis();
+            if (now - StartTime < BypassTimer)
+            {
+                currentAlarmState = AlarmState::Bypass;
+            }
+            else
+            {
+                TimeOut = true;
+                SilenceFlag = false;
+            }
+        }
     }
-    if (Debug.Tick()){
+
+    // Call the approrate function based on state
+    //  int call = static_cast<int>(CurrentState);  //cast currentstate enum to int
+    States[(uint8_t)currentAlarmState](1); // call the appropriate function based on the current alarm state.  The bool value is not used in this case, but it is passed to match the function signature.
+
+    if (Debug.Tick())
+    {
         getDebug();
     }
 }
@@ -76,14 +81,14 @@ void loop()
 // Subroutine
 void IsNormal(bool i)
 {
-    digitalWrite(_LedPin, LedFull); // Turn off the LED
+    analogWrite(_LedPin, LedHalf);     // Turn off the LED
     analogWrite(_BuzzerPin, VolumeOff); // Turn off the buzzer
 }
 
 void IsAlarm(bool i)
 {
     analogWrite(_BuzzerPin, VolumeOn);
-    analogWrite(_LedPin, LedHalf);
+    analogWrite(_LedPin, LedFull);
     delay(AlarmF_Rate);
     analogWrite(_LedPin, 0);
     delay(AlarmF_Rate);
