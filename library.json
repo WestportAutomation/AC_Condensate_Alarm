@@ -1,7 +1,7 @@
 {
-    "name": "AC_Condensor_V2",
+    "name": "AC_Condensate_V2",
     "version": "1.0.0",  
-    "description": "Detects condensor water level and controls a buzzer and silence pin.",
+    "description": "Detects Condensate water level and controls a buzzer and silence pin.",
     "keywords": "Water Level",
     "repository": {
         "name": "Water Level Detection",

@@ -31,48 +31,44 @@ void IsrSilence()
 
 void loop()
 {
-    if (Scan.Tick())
+    // Chk if there is water present
+    if (!digitalRead(_WaterPin))
     {
-
-        // Chk if there is water present
-        if (!digitalRead(_WaterPin))
+        WaterFlag = true;
+    }
+    else
+    {
+        WaterFlag = false;
+    }
+    // chk if the bypass button has not been pushed
+    if (WaterFlag && !SilenceFlag)
+    {
+        currentAlarmState = AlarmState::Alarm;
+    }
+    // Reset to normal
+    if (!WaterFlag)
+    {
+        currentAlarmState = AlarmState::Normal;
+    }
+    // Chk if the bypass button has been pressed and the bypass time has not timed out
+    if (SilenceFlag && !TimeOut)
+    {
+        long now = millis();
+        if (now - StartTime < BypassTimer)
         {
-            WaterFlag = true;
+            currentAlarmState = AlarmState::Bypass;
         }
         else
         {
-            WaterFlag = false;
+            TimeOut = true;
+            SilenceFlag = false;
         }
-        // chk if the bypass button has not been pushed
-        if (WaterFlag && !SilenceFlag)
-        {
-            currentAlarmState = AlarmState::Alarm;
-        }
-        // Reset to normal
-        if (!WaterFlag)
-        {
-            currentAlarmState = AlarmState::Normal;
-        }
-        // Chk if the bypass button has been pressed and the bypass time has not timed out
-        if (SilenceFlag && !TimeOut)
-        {
-            long now = millis();
-            if (now - StartTime < BypassTimer)
-            {
-                currentAlarmState = AlarmState::Bypass;
-            }
-            else
-            {
-                TimeOut = true;
-                SilenceFlag = false;
-            }
-        }
+
         // Call the approrate function based on state
         //  int call = static_cast<int>(CurrentState);  //cast currentstate enum to int
         States[(uint8_t)currentAlarmState](1); // call the appropriate function based on the current alarm state.  The bool value is not used in this case, but it is passed to match the function signature.
     }
-    if (Debug.Tick())
-    {
+    if (Debug.Tick()){
         getDebug();
     }
 }
@@ -80,8 +76,7 @@ void loop()
 // Subroutine
 void IsNormal(bool i)
 {
-
-    analogWrite(_LedPin, 125);          // Turn off the LED
+    digitalWrite(_LedPin, LedFull); // Turn off the LED
     analogWrite(_BuzzerPin, VolumeOff); // Turn off the buzzer
 }
 
