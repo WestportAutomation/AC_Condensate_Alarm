@@ -1,9 +1,9 @@
 #include <Arduino.h>
 #include <MyDelay.h> // Include the MyDelay library for delay functionality
 #include <ioPins.h>  // Include the ioPins library for pin definitions and setup
-#include <MyDef.h> // Include the MyDef library for definitions
+#include <MyDef.h>   // Include the MyDef library for definitions
 
-MyDelay Scan(5000); // Create a MyDelay object with a 5-second delay
+MyDelay Scan(5000);  // Create a MyDelay object with a 5-second delay
 MyDelay Debug(2000); // Create a MyDelay object with a 2-second delay
 
 AlarmState currentAlarmState = AlarmState::Normal; // Initialize an AlarmState variable to Normal
@@ -31,45 +31,48 @@ void IsrSilence()
 
 void loop()
 {
-    // Chk if there is water present
-    if (!digitalRead(_WaterPin))
+    if (Scan.Tick())
     {
-        WaterFlag = true;
-    }
-    else
-    {
-        WaterFlag = false;
-    }
-    // chk if the bypass button has not been pushed
-    if (WaterFlag && !SilenceFlag)
-    {
-        currentAlarmState = AlarmState::Alarm;
-    }
-    // Reset to normal
-    if (!WaterFlag)
-    {
-        currentAlarmState = AlarmState::Normal;
-    }
-    // Chk if the bypass button has been pressed and the bypass time has not timed out
-    if (SilenceFlag && !TimeOut)
-    {
-        long now = millis();
-        if (now - StartTime < BypassTimer)
+
+        // Chk if there is water present
+        if (!digitalRead(_WaterPin))
         {
-            currentAlarmState = AlarmState::Bypass;
+            WaterFlag = true;
         }
         else
         {
-            TimeOut = true;
-            SilenceFlag = false;
+            WaterFlag = false;
         }
-
-       }
+        // chk if the bypass button has not been pushed
+        if (WaterFlag && !SilenceFlag)
+        {
+            currentAlarmState = AlarmState::Alarm;
+        }
+        // Reset to normal
+        if (!WaterFlag)
+        {
+            currentAlarmState = AlarmState::Normal;
+        }
+        // Chk if the bypass button has been pressed and the bypass time has not timed out
+        if (SilenceFlag && !TimeOut)
+        {
+            long now = millis();
+            if (now - StartTime < BypassTimer)
+            {
+                currentAlarmState = AlarmState::Bypass;
+            }
+            else
+            {
+                TimeOut = true;
+                SilenceFlag = false;
+            }
+        }
         // Call the approrate function based on state
         //  int call = static_cast<int>(CurrentState);  //cast currentstate enum to int
         States[(uint8_t)currentAlarmState](1); // call the appropriate function based on the current alarm state.  The bool value is not used in this case, but it is passed to match the function signature.
-    
-    if (Debug.Tick()){
+    }
+    if (Debug.Tick())
+    {
         getDebug();
     }
 }
@@ -78,7 +81,7 @@ void loop()
 void IsNormal(bool i)
 {
     Serial.println("Normal State Bitchs");
-    analogWrite(_LedPin, 125); // Turn off the LED
+    analogWrite(_LedPin, 125);          // Turn off the LED
     analogWrite(_BuzzerPin, VolumeOff); // Turn off the buzzer
 }
 
