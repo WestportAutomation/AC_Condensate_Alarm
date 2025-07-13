@@ -63,11 +63,10 @@ void loop()
             TimeOut = true;
             SilenceFlag = false;
         }
-
-        // Call the approrate function based on state
+    }
+         // Call the approrate function based on state
         //  int call = static_cast<int>(CurrentState);  //cast currentstate enum to int
         States[(uint8_t)currentAlarmState](1); // call the appropriate function based on the current alarm state.  The bool value is not used in this case, but it is passed to match the function signature.
-    }
     if (Debug.Tick()){
         getDebug();
     }
