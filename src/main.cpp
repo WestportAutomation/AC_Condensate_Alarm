@@ -75,7 +75,7 @@ void loop()
 // Subroutine
 void IsNormal(bool i)
 {
-    digitalWrite(_LedPin, LedFull); // Turn off the LED
+    analogWrite(_LedPin, LedHalf); // Turn off the LED
     analogWrite(_BuzzerPin, VolumeOff); // Turn off the buzzer
 }
 
