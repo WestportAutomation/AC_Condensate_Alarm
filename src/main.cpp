@@ -80,7 +80,7 @@ void loop()
 // Subroutine
 void IsNormal(bool i)
 {
-    Serial.println("Normal State Bitchs");
+
     analogWrite(_LedPin, 125);          // Turn off the LED
     analogWrite(_BuzzerPin, VolumeOff); // Turn off the buzzer
 }
